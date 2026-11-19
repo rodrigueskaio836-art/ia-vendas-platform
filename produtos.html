@@ -6,129 +6,235 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>VENDAI | Produtos</title>
 <style>
-* { box-sizing: border-box; }
-body {
-  margin: 0;
-  padding: 24px;
-  font-family: Arial, sans-serif;
-  background: #0b1020;
-  color: #fff;
-}
-.container { max-width: 850px; margin: auto; }
-a { color: #a78bfa; text-decoration: none; }
-h1 { margin-bottom: 8px; }
-p { color: #aab2c5; }
-.card {
-  background: #151d32;
-  padding: 22px;
-  border-radius: 14px;
-  margin-top: 24px;
-}
-label { display: block; margin: 16px 0 7px; }
-input, textarea {
-  width: 100%;
-  padding: 13px;
-  border: 1px solid #34415c;
-  border-radius: 8px;
-  background: #0b1020;
-  color: white;
-  font-size: 16px;
-}
-textarea { min-height: 90px; }
-button {
-  margin-top: 18px;
-  padding: 14px 20px;
-  border: 0;
-  border-radius: 8px;
-  background: #8b5cf6;
-  color: white;
-  font-weight: bold;
-  font-size: 15px;
-  cursor: pointer;
-}
-.product {
-  padding: 15px;
-  margin-top: 12px;
-  background: #202b44;
-  border-radius: 9px;
-}
-.delete {
-  background: #9f3345;
-  margin-top: 10px;
-}
-.status {
-  color: #4ade80;
-  font-size: 13px;
-  margin-top: 12px;
-}
+*{box-sizing:border-box}
+body{margin:0;padding:24px;font-family:Arial,sans-serif;background:#0b1020;color:#fff}
+.container{max-width:850px;margin:auto}
+a{color:#a78bfa;text-decoration:none}
+p{color:#aab2c5}
+.card{background:#151d32;padding:22px;border-radius:14px;margin-top:24px}
+label{display:block;margin:16px 0 7px}
+input,textarea{width:100%;padding:13px;border:1px solid #34415c;border-radius:8px;background:#0b1020;color:white;font-size:16px}
+textarea{min-height:90px}
+button{margin-top:18px;padding:14px 20px;border:0;border-radius:8px;background:#8b5cf6;color:white;font-weight:bold;font-size:15px;cursor:pointer}
+button:disabled{opacity:.5;cursor:not-allowed}
+.product{padding:15px;margin-top:12px;background:#202b44;border-radius:9px}
+.delete{background:#9f3345;margin-top:10px}
+.status{color:#4ade80;font-size:13px;margin-top:12px;white-space:pre-wrap}
+.hidden{display:none}
 </style>
 </head>
 <body>
 <div class="container">
-  <a href="index.html">← Voltar ao painel</a>
-  <h1>📦 Produtos</h1>
-  <p>Cadastre e organize os produtos vendidos pela VENDAI.</p>
+<a href="index.html">← Voltar ao painel</a>
+<h1>📦 VENDAI | Produtos</h1>
+<p>Gerencie seus produtos na nuvem.</p>
 
-  <div class="card">
-    <h2>Novo produto</h2>
-    <form id="productForm">
-      <label>Nome do produto</label>
-      <input id="name" required placeholder="Ex.: Smartwatch">
+<div class="card" id="authCard">
+<h2>🔐 Acesso à sua conta</h2>
+<label>E-mail</label>
+<input id="email" type="email" placeholder="seu@email.com" autocomplete="email">
 
-      <label>Preço de venda (R$)</label>
-      <input id="price" type="number" min="0" step="0.01" required placeholder="199.90">
+<label>Senha</label>
+<input id="password" type="password" placeholder="Mínimo de 6 caracteres" autocomplete="current-password">
 
-      <label>Estoque disponível</label>
-      <input id="stock" type="number" min="0" step="1" required placeholder="10">
-
-      <label>Descrição</label>
-      <textarea id="description" placeholder="Descreva seu produto"></textarea>
-
-      <button type="submit">Cadastrar produto</button>
-    </form>
-    <div class="status" id="status"></div>
-  </div>
-
-  <div class="card">
-    <h2>Produtos cadastrados</h2>
-    <div id="products">Carregando produtos...</div>
-  </div>
+<button type="button" id="loginButton">Entrar</button>
+<button type="button" id="signupButton">Criar minha conta</button>
+<div class="status" id="authStatus"></div>
 </div>
 
+<div class="card hidden" id="appCard">
+<p id="userInfo"></p>
+<button type="button" id="logoutButton">Sair da conta</button>
+
+<h2>Novo produto</h2>
+<form id="productForm">
+<label>Nome do produto</label>
+<input id="name" required placeholder="Ex.: Smartwatch">
+
+<label>Preço de venda (R$)</label>
+<input id="price" type="number" min="0" step="0.01" required placeholder="199.90">
+
+<label>Estoque disponível</label>
+<input id="stock" type="number" min="0" step="1" required placeholder="10">
+
+<label>Descrição</label>
+<textarea id="description" placeholder="Descreva seu produto"></textarea>
+
+<button type="submit" id="saveButton">Cadastrar produto</button>
+</form>
+
+<div class="status" id="status"></div>
+
+<h2>Produtos cadastrados</h2>
+<div id="products">Carregando...</div>
+</div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
+const SUPABASE_URL = "https://sycsmnmmxbxgwgozwdwy.supabase.co";
+const SUPABASE_KEY = "sb_publishable__F1cYBkge2cp2jLxDTimaw_NLhbgB-E";
 const STORAGE_KEY = "vendai_produtos";
-const form = document.getElementById("productForm");
-const products = document.getElementById("products");
+
+const db = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+const authCard = document.getElementById("authCard");
+const appCard = document.getElementById("appCard");
+const authStatus = document.getElementById("authStatus");
 const status = document.getElementById("status");
+const products = document.getElementById("products");
+const form = document.getElementById("productForm");
 
-function carregarProdutos() {
-  try {
-    return JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
-  } catch {
-    return [];
+let currentUser = null;
+
+function mensagem(elemento, texto) {
+  elemento.textContent = texto;
+}
+
+async function atualizarInterface() {
+  if (!currentUser) {
+    authCard.classList.remove("hidden");
+    appCard.classList.add("hidden");
+    return;
+  }
+
+  authCard.classList.add("hidden");
+  appCard.classList.remove("hidden");
+
+  document.getElementById("userInfo").textContent =
+    "Conectado como: " + currentUser.email;
+
+  await carregarProdutos();
+}
+
+async function entrar() {
+  const email = document.getElementById("email").value.trim();
+  const password = document.getElementById("password").value;
+
+  if (!email || !password) {
+    mensagem(authStatus, "Informe seu e-mail e sua senha.");
+    return;
+  }
+
+  const { error } = await db.auth.signInWithPassword({
+    email,
+    password
+  });
+
+  if (error) {
+    mensagem(authStatus, "Erro ao entrar: " + error.message);
   }
 }
 
-function salvarProdutos(lista) {
-  try {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(lista));
-    return true;
-  } catch {
-    status.textContent = "Não foi possível salvar. Verifique o armazenamento do navegador.";
-    return false;
+async function cadastrarConta() {
+  const email = document.getElementById("email").value.trim();
+  const password = document.getElementById("password").value;
+
+  if (!email || password.length < 6) {
+    mensagem(authStatus, "Informe um e-mail válido e uma senha com pelo menos 6 caracteres.");
+    return;
+  }
+
+  const { data, error } = await db.auth.signUp({
+    email,
+    password,
+    options: {
+      emailRedirectTo: window.location.origin + window.location.pathname
+    }
+  });
+
+  if (error) {
+    mensagem(authStatus, "Erro ao criar conta: " + error.message);
+    return;
+  }
+
+  if (data.session) {
+    mensagem(authStatus, "Conta criada com sucesso!");
+  } else {
+    mensagem(authStatus, "Conta criada! Confira seu e-mail e confirme o cadastro antes de entrar.");
   }
 }
 
-function mostrarProdutos() {
-  const lista = carregarProdutos();
+async function sair() {
+  const { error } = await db.auth.signOut();
+
+  if (error) {
+    mensagem(status, "Erro ao sair: " + error.message);
+    return;
+  }
+
+  currentUser = null;
+  await atualizarInterface();
+  mensagem(authStatus, "Você saiu da sua conta.");
+}
+
+async function carregarProdutos() {
+  products.textContent = "Carregando produtos...";
+
+  let { data, error } = await db
+    .from("products")
+    .select("*")
+    .order("created_at", { ascending: false });
+
+  if (error) {
+    products.textContent = "Erro ao carregar produtos: " + error.message;
+    return;
+  }
+
+  if (data.length === 0) {
+    let antigos = [];
+
+    try {
+      antigos = JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
+    } catch {
+      antigos = [];
+    }
+
+    if (antigos.length > 0) {
+      const { error: importError } = await db
+        .from("products")
+        .insert(antigos.map(p => ({
+          name: p.name,
+          price: Number(p.price),
+          stock: Number(p.stock),
+          description: p.description || ""
+        })));
+
+      if (importError) {
+        mensagem(status, "Erro ao importar produtos antigos: " + importError.message);
+        return;
+      }
+
+      localStorage.removeItem(STORAGE_KEY);
+
+      mensagem(status, "Produtos antigos transferidos para a nuvem!");
+
+      const resultado = await db
+        .from("products")
+        .select("*")
+        .order("created_at", { ascending: false });
+
+      if (resultado.error) {
+        products.textContent = "Erro ao atualizar a lista: " + resultado.error.message;
+        return;
+      }
+
+      data = resultado.data;
+    }
+  }
+
+  mostrarProdutos(data);
+}
+
+function mostrarProdutos(lista) {
   products.replaceChildren();
 
-  if (lista.length === 0) {
+  if (!lista || lista.length === 0) {
     products.textContent = "Nenhum produto cadastrado.";
     return;
   }
 
-  lista.forEach((produto, index) => {
+  lista.forEach(produto => {
     const item = document.createElement("div");
     item.className = "product";
 
@@ -148,14 +254,21 @@ function mostrarProdutos() {
     excluir.textContent = "Excluir produto";
     excluir.type = "button";
 
-    excluir.addEventListener("click", function() {
-      const atualizados = carregarProdutos();
-      atualizados.splice(index, 1);
+    excluir.addEventListener("click", async () => {
+      if (!confirm("Deseja realmente excluir este produto?")) return;
 
-      if (salvarProdutos(atualizados)) {
-        mostrarProdutos();
-        status.textContent = "Produto excluído com sucesso.";
+      const { error } = await db
+        .from("products")
+        .delete()
+        .eq("id", produto.id);
+
+      if (error) {
+        mensagem(status, "Erro ao excluir: " + error.message);
+        return;
       }
+
+      mensagem(status, "Produto excluído com sucesso!");
+      await carregarProdutos();
     });
 
     item.append(nome, detalhes, descricao, excluir);
@@ -163,8 +276,10 @@ function mostrarProdutos() {
   });
 }
 
-form.addEventListener("submit", function(event) {
+form.addEventListener("submit", async event => {
   event.preventDefault();
+
+  if (!currentUser) return;
 
   const produto = {
     name: document.getElementById("name").value.trim(),
@@ -173,18 +288,60 @@ form.addEventListener("submit", function(event) {
     description: document.getElementById("description").value.trim()
   };
 
-  const lista = carregarProdutos();
-  lista.push(produto);
-
-  if (salvarProdutos(lista)) {
-    form.reset();
-    mostrarProdutos();
-    status.textContent = "Produto salvo com sucesso!";
+  if (!produto.name || !Number.isFinite(produto.price) ||
+      !Number.isInteger(produto.stock) ||
+      produto.price < 0 || produto.stock < 0) {
+    mensagem(status, "Confira os dados do produto.");
+    return;
   }
+
+  const saveButton = document.getElementById("saveButton");
+  saveButton.disabled = true;
+  mensagem(status, "Salvando na nuvem...");
+
+  const { error } = await db
+    .from("products")
+    .insert(produto);
+
+  saveButton.disabled = false;
+
+  if (error) {
+    mensagem(status, "Erro ao salvar: " + error.message);
+    return;
+  }
+
+  form.reset();
+  mensagem(status, "Produto salvo na nuvem com sucesso!");
+  await carregarProdutos();
 });
 
-mostrarProdutos();
+document.getElementById("loginButton")
+  .addEventListener("click", entrar);
+
+document.getElementById("signupButton")
+  .addEventListener("click", cadastrarConta);
+
+document.getElementById("logoutButton")
+  .addEventListener("click", sair);
+
+async function iniciar() {
+  const { data, error } = await db.auth.getSession();
+
+  if (error) {
+    mensagem(authStatus, "Erro de conexão: " + error.message);
+    return;
+  }
+
+  currentUser = data.session?.user || null;
+  await atualizarInterface();
+
+  db.auth.onAuthStateChange((_event, session) => {
+    currentUser = session?.user || null;
+    setTimeout(() => atualizarInterface(), 0);
+  });
+}
+
+iniciar();
 </script>
 </body>
 </html>
-
