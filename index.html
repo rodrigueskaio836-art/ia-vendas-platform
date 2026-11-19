@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -72,9 +73,7 @@ input{
   font-size:16px
 }
 
-button{
-  cursor:pointer
-}
+button{cursor:pointer}
 
 .primary{
   display:block;
@@ -219,8 +218,6 @@ footer{
 
 <main>
 
-<!-- ACESSO -->
-
 <div id="authSection" class="card">
 
   <h1>Bem-vindo ao VENDAI</h1>
@@ -262,8 +259,6 @@ footer{
   <div class="status" id="authStatus"></div>
 
 </div>
-
-<!-- PAINEL -->
 
 <div id="dashboard" class="hidden">
 
@@ -321,10 +316,10 @@ footer{
       Gerenciar produtos para venda
     </a>
 
-    <button class="action" onclick="alert('Módulo de leads em construção!')">
+    <a class="action" href="leads.html">
       👥 <strong>Clientes e leads</strong><br>
       Gerenciar clientes interessados
-    </button>
+    </a>
 
     <button class="action" onclick="alert('Agente de IA em construção!')">
       🤖 <strong>Agente de inteligência artificial</strong><br>
@@ -404,8 +399,6 @@ function atualizarInterface(){
 
 }
 
-// LOGIN
-
 async function entrar(){
 
   const email =
@@ -437,8 +430,6 @@ async function entrar(){
   mensagem("Login realizado com sucesso!");
 
 }
-
-// CADASTRO
 
 async function cadastrar(){
 
@@ -492,8 +483,6 @@ async function cadastrar(){
 
 }
 
-// RECUPERAÇÃO DE SENHA
-
 async function recuperarSenha(){
 
   const email =
@@ -532,8 +521,6 @@ async function recuperarSenha(){
 
 }
 
-// LOGOUT
-
 async function sair(){
 
   const button = document.getElementById("logoutButton");
@@ -553,8 +540,6 @@ async function sair(){
 
 }
 
-// EVENTOS
-
 document.getElementById("loginButton")
   .addEventListener("click", entrar);
 
@@ -566,8 +551,6 @@ document.getElementById("forgotButton")
 
 document.getElementById("logoutButton")
   .addEventListener("click", sair);
-
-// SESSÃO
 
 async function iniciar(){
 
