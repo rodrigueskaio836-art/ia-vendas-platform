@@ -44,12 +44,22 @@ button {
   color: white;
   font-weight: bold;
   font-size: 15px;
+  cursor: pointer;
 }
 .product {
   padding: 15px;
   margin-top: 12px;
   background: #202b44;
   border-radius: 9px;
+}
+.delete {
+  background: #9f3345;
+  margin-top: 10px;
+}
+.status {
+  color: #4ade80;
+  font-size: 13px;
+  margin-top: 12px;
 }
 </style>
 </head>
@@ -76,48 +86,105 @@ button {
 
       <button type="submit">Cadastrar produto</button>
     </form>
+    <div class="status" id="status"></div>
   </div>
 
   <div class="card">
     <h2>Produtos cadastrados</h2>
-    <div id="products">Nenhum produto cadastrado nesta sessão.</div>
+    <div id="products">Carregando produtos...</div>
   </div>
 </div>
 
 <script>
+const STORAGE_KEY = "vendai_produtos";
 const form = document.getElementById("productForm");
 const products = document.getElementById("products");
+const status = document.getElementById("status");
+
+function carregarProdutos() {
+  try {
+    return JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
+  } catch {
+    return [];
+  }
+}
+
+function salvarProdutos(lista) {
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(lista));
+    return true;
+  } catch {
+    status.textContent = "Não foi possível salvar. Verifique o armazenamento do navegador.";
+    return false;
+  }
+}
+
+function mostrarProdutos() {
+  const lista = carregarProdutos();
+  products.replaceChildren();
+
+  if (lista.length === 0) {
+    products.textContent = "Nenhum produto cadastrado.";
+    return;
+  }
+
+  lista.forEach((produto, index) => {
+    const item = document.createElement("div");
+    item.className = "product";
+
+    const nome = document.createElement("strong");
+    nome.textContent = produto.name;
+
+    const detalhes = document.createElement("p");
+    detalhes.textContent =
+      "Preço: R$ " + Number(produto.price).toFixed(2) +
+      " | Estoque: " + produto.stock;
+
+    const descricao = document.createElement("p");
+    descricao.textContent = produto.description || "Sem descrição.";
+
+    const excluir = document.createElement("button");
+    excluir.className = "delete";
+    excluir.textContent = "Excluir produto";
+    excluir.type = "button";
+
+    excluir.addEventListener("click", function() {
+      const atualizados = carregarProdutos();
+      atualizados.splice(index, 1);
+
+      if (salvarProdutos(atualizados)) {
+        mostrarProdutos();
+        status.textContent = "Produto excluído com sucesso.";
+      }
+    });
+
+    item.append(nome, detalhes, descricao, excluir);
+    products.appendChild(item);
+  });
+}
 
 form.addEventListener("submit", function(event) {
   event.preventDefault();
 
-  const name = document.getElementById("name").value;
-  const price = Number(document.getElementById("price").value);
-  const stock = document.getElementById("stock").value;
-  const description = document.getElementById("description").value;
+  const produto = {
+    name: document.getElementById("name").value.trim(),
+    price: Number(document.getElementById("price").value),
+    stock: Number(document.getElementById("stock").value),
+    description: document.getElementById("description").value.trim()
+  };
 
-  const item = document.createElement("div");
-  item.className = "product";
+  const lista = carregarProdutos();
+  lista.push(produto);
 
-  const title = document.createElement("strong");
-  title.textContent = name;
-
-  const details = document.createElement("p");
-  details.textContent = "Preço: R$ " + price.toFixed(2) +
-    " | Estoque: " + stock;
-
-  const desc = document.createElement("p");
-  desc.textContent = description;
-
-  item.append(title, details, desc);
-
-  if (products.textContent.includes("Nenhum produto")) {
-    products.textContent = "";
+  if (salvarProdutos(lista)) {
+    form.reset();
+    mostrarProdutos();
+    status.textContent = "Produto salvo com sucesso!";
   }
-
-  products.appendChild(item);
-  form.reset();
 });
+
+mostrarProdutos();
 </script>
 </body>
 </html>
+
