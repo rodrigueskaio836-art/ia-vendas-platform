@@ -1,23 +1,88 @@
+
 <!DOCTYPE html>
-
 <html lang="pt-BR">
-
 <head>
-
-    <meta charset="UTF-8">
-
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-    <title>IA Vendas</title>
-
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>VENDAI | Inteligência em Vendas</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:Arial,sans-serif;background:#0b1020;color:#fff}
+header{padding:22px;background:#111a30;border-bottom:1px solid #26324c}
+.logo{font-size:27px;font-weight:800;color:#8b7cff}
+.logo span{color:#fff}
+header p{color:#9aa8c4;font-size:12px;margin-top:5px}
+main{padding:22px;max-width:1100px;margin:auto}
+h1{font-size:25px;margin-bottom:8px}
+.subtitle{color:#94a3b8;font-size:14px;margin-bottom:25px}
+.status{display:inline-block;background:#123b35;color:#4ade80;padding:8px 12px;border-radius:20px;font-size:12px;margin-bottom:22px}
+.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:13px}
+.card{background:#151f35;border:1px solid #263550;padding:18px;border-radius:13px}
+.card p{font-size:12px;color:#9aa8c4;margin-bottom:12px}
+.card h2{font-size:27px}
+.section{margin-top:27px}
+.section h2{font-size:18px;margin-bottom:15px}
+.action{display:block;width:100%;padding:15px;margin-bottom:11px;border:1px solid #344263;border-radius:10px;background:#192642;color:white;text-align:left;font-size:14px}
+.action strong{color:#a99cff}
+.highlight{background:#6655e8;border:0;text-align:center;font-weight:bold}
+footer{text-align:center;color:#71809e;font-size:12px;padding:30px}
+@media(min-width:700px){.grid{grid-template-columns:repeat(4,1fr)}}
+</style>
 </head>
-
 <body>
+<header>
+<div class="logo">VENDAI<span>.</span></div>
+<p>INTELIGÊNCIA ARTIFICIAL DE VENDAS</p>
+</header>
+<main>
+<h1>Painel de controle</h1>
+<p class="subtitle">Bem-vindo à sua central de vendas inteligentes.</p>
+<div class="status">● Plataforma em desenvolvimento</div>
 
-    <h1>IA Vendas</h1>
+<div class="grid">
+<div class="card">
+<p>Vendas realizadas</p>
+<h2>0</h2>
+</div>
+<div class="card">
+<p>Leads cadastrados</p>
+<h2>0</h2>
+</div>
+<div class="card">
+<p>Ligações realizadas</p>
+<h2>0</h2>
+</div>
+<div class="card">
+<p>Taxa de conversão</p>
+<h2>0%</h2>
+</div>
+</div>
 
-    <p>Nossa plataforma de vendas inteligentes está começando!</p>
+<div class="section">
+<h2>Central de operações</h2>
+<button class="action" onclick="alert('Módulo de produtos em construção!')">
+📦 <strong>Produtos</strong><br>Gerenciar produtos para venda
+</button>
+<button class="action" onclick="alert('Módulo de leads em construção!')">
+👥 <strong>Clientes e leads</strong><br>Gerenciar clientes interessados
+</button>
+<button class="action" onclick="alert('Agente de IA em construção!')">
+🤖 <strong>Agente de inteligência artificial</strong><br>Configurar seu vendedor virtual
+</button>
+<button class="action" onclick="alert('Módulo de ligações em construção!')">
+📞 <strong>Central de ligações</strong><br>Acompanhar ligações e atendimentos
+</button>
+<button class="action" onclick="alert('Módulo de pagamentos em construção!')">
+💳 <strong>Pagamentos</strong><br>Gerenciar finalização das vendas
+</button>
+</div>
 
+<div class="section">
+<button class="action highlight" onclick="alert('Em breve: sua IA estará pronta para vender!')">
+INICIAR VENDA COM IA
+</button>
+</div>
+</main>
+<footer>VENDAI © 2026 | Tecnologia inteligente para vender mais.</footer>
 </body>
-
 </html>
