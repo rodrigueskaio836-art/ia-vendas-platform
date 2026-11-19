@@ -1,0 +1,648 @@
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>VENDAI | Clientes e Leads</title>
+
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+
+body{
+  font-family:Arial,sans-serif;
+  background:#0b1020;
+  color:#fff;
+  padding-bottom:30px
+}
+
+header{
+  padding:20px;
+  background:#111a30;
+  border-bottom:1px solid #26324c;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:12px;
+  flex-wrap:wrap
+}
+
+.logo{
+  font-size:25px;
+  font-weight:800;
+  color:#8b7cff
+}
+
+.logo span{color:white}
+
+header a{
+  color:#a99cff;
+  text-decoration:none;
+  font-size:13px
+}
+
+main{
+  max-width:1000px;
+  margin:auto;
+  padding:20px
+}
+
+h1{font-size:25px;margin-bottom:8px}
+
+.subtitle{
+  color:#94a3b8;
+  font-size:14px;
+  margin-bottom:22px
+}
+
+.card{
+  background:#151f35;
+  border:1px solid #263550;
+  padding:20px;
+  border-radius:13px;
+  margin-bottom:20px
+}
+
+h2{
+  font-size:18px;
+  margin-bottom:15px
+}
+
+label{
+  display:block;
+  font-size:13px;
+  margin:13px 0 7px
+}
+
+input,select,textarea{
+  width:100%;
+  padding:13px;
+  border:1px solid #344263;
+  border-radius:9px;
+  background:#0b1020;
+  color:white;
+  font-size:15px
+}
+
+textarea{
+  min-height:85px;
+  resize:vertical
+}
+
+button{
+  cursor:pointer;
+  border:0;
+  border-radius:9px;
+  padding:12px 15px;
+  font-weight:bold;
+  color:white
+}
+
+.primary{
+  width:100%;
+  margin-top:17px;
+  background:#6655e8;
+  font-size:15px
+}
+
+.secondary{background:#263550}
+
+.delete{background:#9f3345}
+
+.edit{background:#6655e8}
+
+.search{
+  margin-bottom:15px
+}
+
+.lead{
+  background:#101a2e;
+  border:1px solid #344263;
+  border-radius:10px;
+  padding:16px;
+  margin-bottom:12px
+}
+
+.lead h3{
+  font-size:17px;
+  margin-bottom:8px
+}
+
+.lead p{
+  color:#aab6cc;
+  font-size:13px;
+  margin:6px 0;
+  overflow-wrap:anywhere
+}
+
+.badge{
+  display:inline-block;
+  background:#263550;
+  color:#c4baff;
+  padding:6px 9px;
+  border-radius:20px;
+  font-size:11px;
+  margin:5px 0 10px
+}
+
+.actions{
+  display:flex;
+  gap:8px;
+  margin-top:13px
+}
+
+.actions button{
+  flex:1;
+  font-size:12px
+}
+
+.status{
+  color:#4ade80;
+  font-size:13px;
+  margin-top:12px;
+  white-space:pre-wrap
+}
+
+.error{color:#f87171}
+
+.empty{
+  color:#94a3b8;
+  font-size:14px;
+  padding:15px 0
+}
+
+.stats{
+  color:#a99cff;
+  font-size:14px;
+  margin-bottom:15px
+}
+
+.hidden{display:none!important}
+
+@media(min-width:650px){
+  .form-grid{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:0 15px
+  }
+}
+</style>
+</head>
+
+<body>
+
+<header>
+  <div class="logo">VENDAI<span>.</span></div>
+  <a href="index.html">← Voltar ao painel</a>
+</header>
+
+<main>
+
+  <h1>Clientes e Leads</h1>
+
+  <p class="subtitle">
+    Gerencie seus contatos e acompanhe suas oportunidades de venda.
+  </p>
+
+  <div id="loading" class="card">
+    Verificando acesso...
+  </div>
+
+  <div id="content" class="hidden">
+
+    <div class="card">
+
+      <h2 id="formTitle">Cadastrar novo lead</h2>
+
+      <form id="leadForm">
+
+        <div class="form-grid">
+
+          <div>
+            <label>Nome do cliente *</label>
+            <input id="nome" required maxlength="150"
+              placeholder="Nome completo">
+          </div>
+
+          <div>
+            <label>Telefone *</label>
+            <input id="telefone" required maxlength="30"
+              placeholder="(31) 99999-9999">
+          </div>
+
+          <div>
+            <label>E-mail</label>
+            <input id="email" type="email" maxlength="150"
+              placeholder="cliente@email.com">
+          </div>
+
+          <div>
+            <label>Produto de interesse</label>
+            <input id="produto" maxlength="150"
+              placeholder="Produto desejado">
+          </div>
+
+          <div>
+            <label>Status da negociação</label>
+            <select id="status">
+              <option value="Novo">Novo</option>
+              <option value="Em contato">Em contato</option>
+              <option value="Interessado">Interessado</option>
+              <option value="Em negociação">Em negociação</option>
+              <option value="Convertido">Convertido</option>
+              <option value="Perdido">Perdido</option>
+            </select>
+          </div>
+
+        </div>
+
+        <label>Observações</label>
+        <textarea id="observacoes"
+          placeholder="Informações importantes sobre o cliente"></textarea>
+
+        <button class="primary" id="saveButton" type="submit">
+          Salvar lead
+        </button>
+
+        <button class="secondary hidden" id="cancelButton"
+          type="button" style="width:100%;margin-top:10px">
+          Cancelar edição
+        </button>
+
+        <div id="formMessage" class="status"></div>
+
+      </form>
+
+    </div>
+
+    <div class="card">
+
+      <h2>Minha carteira de leads</h2>
+
+      <div class="stats" id="leadCount">
+        0 leads cadastrados
+      </div>
+
+      <input class="search" id="search"
+        placeholder="Buscar por nome, telefone ou produto...">
+
+      <select id="filter">
+        <option value="">Todos os status</option>
+        <option value="Novo">Novo</option>
+        <option value="Em contato">Em contato</option>
+        <option value="Interessado">Interessado</option>
+        <option value="Em negociação">Em negociação</option>
+        <option value="Convertido">Convertido</option>
+        <option value="Perdido">Perdido</option>
+      </select>
+
+      <div id="leadList" style="margin-top:18px">
+        <p class="empty">Carregando leads...</p>
+      </div>
+
+    </div>
+
+  </div>
+
+</main>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<script>
+
+const SUPABASE_URL =
+"https://sycsmnmmxbxgwgozwdwy.supabase.co";
+
+const SUPABASE_KEY =
+"sb_publishable__F1cYBkge2cp2jLxDTimaw_NLhbgB-E";
+
+const db = supabase.createClient(
+  SUPABASE_URL,
+  SUPABASE_KEY
+);
+
+let currentUser = null;
+let leads = [];
+let editingId = null;
+
+const loading = document.getElementById("loading");
+const content = document.getElementById("content");
+const form = document.getElementById("leadForm");
+const formMessage = document.getElementById("formMessage");
+const leadList = document.getElementById("leadList");
+
+function escapeHTML(value){
+  return String(value ?? "").replace(/[&<>"']/g, char => ({
+    "&":"&amp;",
+    "<":"&lt;",
+    ">":"&gt;",
+    '"':"&quot;",
+    "'":"&#39;"
+  })[char]);
+}
+
+function message(text, error=false){
+  formMessage.textContent = text;
+  formMessage.className = error
+    ? "status error"
+    : "status";
+}
+
+async function iniciar(){
+
+  const {data,error} = await db.auth.getSession();
+
+  if(error){
+    loading.textContent = "Erro ao verificar acesso.";
+    return;
+  }
+
+  currentUser = data.session?.user || null;
+
+  if(!currentUser){
+    window.location.href = "index.html";
+    return;
+  }
+
+  loading.classList.add("hidden");
+  content.classList.remove("hidden");
+
+  await carregarLeads();
+
+}
+
+async function carregarLeads(){
+
+  leadList.innerHTML =
+    '<p class="empty">Carregando...</p>';
+
+  const {data,error} = await db
+    .from("leads")
+    .select("*")
+    .eq("user_id",currentUser.id)
+    .order("created_at",{ascending:false});
+
+  if(error){
+    leadList.innerHTML =
+      '<p class="empty">Erro ao carregar leads: ' +
+      escapeHTML(error.message) + '</p>';
+    return;
+  }
+
+  leads = data || [];
+
+  renderizarLeads();
+
+}
+
+function renderizarLeads(){
+
+  const search =
+    document.getElementById("search").value
+      .trim().toLowerCase();
+
+  const filter =
+    document.getElementById("filter").value;
+
+  document.getElementById("leadCount").textContent =
+    leads.length + (leads.length === 1
+      ? " lead cadastrado"
+      : " leads cadastrados");
+
+  const filtered = leads.filter(lead => {
+
+    const text = [
+      lead.nome,
+      lead.telefone,
+      lead.email,
+      lead.produto_interesse
+    ].join(" ").toLowerCase();
+
+    return text.includes(search) &&
+      (!filter || lead.status === filter);
+
+  });
+
+  if(filtered.length === 0){
+    leadList.innerHTML =
+      '<p class="empty">Nenhum lead encontrado.</p>';
+    return;
+  }
+
+  leadList.innerHTML = filtered.map(lead => `
+
+    <div class="lead">
+
+      <h3>${escapeHTML(lead.nome)}</h3>
+
+      <span class="badge">
+        ${escapeHTML(lead.status)}
+      </span>
+
+      <p><strong>Telefone:</strong>
+        ${escapeHTML(lead.telefone)}</p>
+
+      <p><strong>E-mail:</strong>
+        ${escapeHTML(lead.email || "Não informado")}</p>
+
+      <p><strong>Produto:</strong>
+        ${escapeHTML(lead.produto_interesse || "Não informado")}</p>
+
+      <p><strong>Observações:</strong>
+        ${escapeHTML(lead.observacoes || "Nenhuma")}</p>
+
+      <div class="actions">
+
+        <button class="edit"
+          data-action="edit"
+          data-id="${escapeHTML(lead.id)}">
+          Editar
+        </button>
+
+        <button class="delete"
+          data-action="delete"
+          data-id="${escapeHTML(lead.id)}">
+          Excluir
+        </button>
+
+      </div>
+
+    </div>
+
+  `).join("");
+
+}
+
+function limparFormulario(){
+
+  form.reset();
+  editingId = null;
+
+  document.getElementById("formTitle").textContent =
+    "Cadastrar novo lead";
+
+  document.getElementById("saveButton").textContent =
+    "Salvar lead";
+
+  document.getElementById("cancelButton")
+    .classList.add("hidden");
+
+  message("");
+
+}
+
+form.addEventListener("submit",async event=>{
+
+  event.preventDefault();
+
+  const button =
+    document.getElementById("saveButton");
+
+  button.disabled = true;
+  message("Salvando...");
+
+  const lead = {
+
+    nome:document.getElementById("nome").value.trim(),
+
+    telefone:document.getElementById("telefone").value.trim(),
+
+    email:document.getElementById("email").value.trim() || null,
+
+    produto_interesse:
+      document.getElementById("produto").value.trim() || null,
+
+    status:document.getElementById("status").value,
+
+    observacoes:
+      document.getElementById("observacoes").value.trim() || null
+
+  };
+
+  let result;
+
+  if(editingId){
+
+    result = await db
+      .from("leads")
+      .update(lead)
+      .eq("id",editingId)
+      .eq("user_id",currentUser.id);
+
+  }else{
+
+    result = await db
+      .from("leads")
+      .insert({
+        ...lead,
+        user_id:currentUser.id
+      });
+
+  }
+
+  button.disabled = false;
+
+  if(result.error){
+    message("Erro ao salvar: " + result.error.message,true);
+    return;
+  }
+
+  message(editingId
+    ? "Lead atualizado com sucesso!"
+    : "Lead cadastrado com sucesso!");
+
+  limparFormulario();
+
+  await carregarLeads();
+
+});
+
+leadList.addEventListener("click",async event=>{
+
+  const button = event.target.closest("button[data-action]");
+
+  if(!button) return;
+
+  const id = button.dataset.id;
+
+  const lead = leads.find(item => item.id === id);
+
+  if(!lead) return;
+
+  if(button.dataset.action === "edit"){
+
+    editingId = id;
+
+    document.getElementById("nome").value = lead.nome;
+    document.getElementById("telefone").value = lead.telefone;
+    document.getElementById("email").value = lead.email || "";
+    document.getElementById("produto").value =
+      lead.produto_interesse || "";
+    document.getElementById("status").value = lead.status;
+    document.getElementById("observacoes").value =
+      lead.observacoes || "";
+
+    document.getElementById("formTitle").textContent =
+      "Editar lead";
+
+    document.getElementById("saveButton").textContent =
+      "Salvar alterações";
+
+    document.getElementById("cancelButton")
+      .classList.remove("hidden");
+
+    message("Editando: " + lead.nome);
+
+    window.scrollTo({top:0,behavior:"smooth"});
+
+  }
+
+  if(button.dataset.action === "delete"){
+
+    if(!confirm("Deseja realmente excluir este lead?")){
+      return;
+    }
+
+    button.disabled = true;
+
+    const {error} = await db
+      .from("leads")
+      .delete()
+      .eq("id",id)
+      .eq("user_id",currentUser.id);
+
+    if(error){
+      alert("Erro ao excluir: " + error.message);
+      button.disabled = false;
+      return;
+    }
+
+    await carregarLeads();
+
+  }
+
+});
+
+document.getElementById("cancelButton")
+  .addEventListener("click",limparFormulario);
+
+document.getElementById("search")
+  .addEventListener("input",renderizarLeads);
+
+document.getElementById("filter")
+  .addEventListener("change",renderizarLeads);
+
+db.auth.onAuthStateChange((_event,session)=>{
+
+  if(!session){
+    window.location.href = "index.html";
+  }
+
+});
+
+iniciar();
+
+</script>
+
+</body>
+</html>
