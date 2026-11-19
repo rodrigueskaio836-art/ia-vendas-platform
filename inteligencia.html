@@ -1,0 +1,148 @@
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>VENDAI | Inteligência de Vendas</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:Arial,sans-serif;background:#0b1020;color:#fff;padding:20px}
+.container{max-width:850px;margin:auto}
+header{margin-bottom:25px}
+h1{font-size:26px;margin-bottom:8px}
+p{color:#aab4ca;line-height:1.5}
+.card{background:#151e33;border:1px solid #26344f;border-radius:14px;padding:20px;margin-bottom:18px}
+h2{font-size:19px;margin-bottom:16px}
+label{display:block;margin:14px 0 7px;color:#dce5f7;font-size:14px}
+input,textarea,select{width:100%;padding:13px;border-radius:8px;border:1px solid #34435f;background:#0b1020;color:white;font-size:15px}
+textarea{min-height:85px;resize:vertical}
+button,.btn{display:inline-block;border:0;border-radius:9px;padding:13px 17px;background:#2563eb;color:white;font-weight:bold;font-size:14px;cursor:pointer;text-decoration:none}
+button:disabled{opacity:.5;cursor:not-allowed}
+.secondary{background:#26344f}
+.actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:18px}
+.output{white-space:pre-wrap;line-height:1.6;color:#e4eaf6;margin-top:12px}
+.notice{font-size:13px;color:#aab4ca;margin-top:12px}
+#status{margin:12px 0;color:#93c5fd}
+</style>
+</head>
+<body>
+<div class="container">
+<header>
+<a href="index.html" class="btn secondary">← Voltar ao painel</a>
+<h1 style="margin-top:22px">🧠 Inteligência de Vendas</h1>
+<p>Prepare abordagens comerciais, mensagens e roteiros para conquistar clientes.</p>
+</header>
+
+<div class="card">
+<h2>Informações do produto ou serviço</h2>
+
+<label>Nome do produto ou serviço</label>
+<input id="produto" placeholder="Ex.: Apartamento, curso, veículo...">
+
+<label>Preço</label>
+<input id="preco" placeholder="Ex.: R$ 2.500">
+
+<label>Público-alvo</label>
+<input id="publico" placeholder="Ex.: Pessoas interessadas em investir">
+
+<label>Principais benefícios e diferenciais</label>
+<textarea id="beneficios" placeholder="Descreva os pontos fortes do produto..."></textarea>
+
+<label>Objetivo da abordagem</label>
+<select id="objetivo">
+<option value="Apresentar o produto">Apresentar o produto</option>
+<option value="Despertar interesse">Despertar interesse</option>
+<option value="Agendar uma reunião">Agendar uma reunião</option>
+<option value="Fechar uma venda">Fechar uma venda</option>
+<option value="Recuperar um cliente">Recuperar um cliente</option>
+</select>
+</div>
+
+<div class="card">
+<h2>🎯 Tipo de abordagem</h2>
+<p>Escolha o material que deseja preparar.</p>
+<div class="actions">
+<button onclick="preparar('whatsapp')">Mensagem para WhatsApp</button>
+<button onclick="preparar('ligacao')">Roteiro de ligação</button>
+<button onclick="preparar('objecoes')">Respostas a objeções</button>
+</div>
+</div>
+
+<div class="card" id="resultado" style="display:none">
+<h2 id="tituloResultado">Resultado</h2>
+<div id="textoResultado" class="output"></div>
+<button class="secondary" onclick="copiar()" style="margin-top:18px">Copiar texto</button>
+</div>
+
+<p id="status">Verificando acesso...</p>
+<p class="notice">Esta é a primeira versão da interface. A conexão com a inteligência artificial real e com os canais de WhatsApp e telefonia será implementada nas próximas etapas.</p>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+const SUPABASE_URL = "https://sycsmnmmxbxgwgozwdwy.supabase.co";
+const SUPABASE_KEY = "sb_publishable__F1cYBkge2cp2jLxDTimaw_NLhbgB-E";
+const db = window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
+
+let textoAtual = "";
+
+async function verificarAcesso(){
+  const {data,error} = await db.auth.getSession();
+  if(error || !data.session){
+    window.location.href = "index.html";
+    return;
+  }
+  document.getElementById("status").textContent =
+    "Conectado: " + data.session.user.email;
+}
+verificarAcesso();
+
+function preparar(tipo){
+  const produto = document.getElementById("produto").value.trim();
+  const preco = document.getElementById("preco").value.trim();
+  const publico = document.getElementById("publico").value.trim();
+  const beneficios = document.getElementById("beneficios").value.trim();
+  const objetivo = document.getElementById("objetivo").value;
+
+  if(!produto || !publico || !beneficios){
+    alert("Preencha o produto, o público-alvo e os benefícios.");
+    return;
+  }
+
+  let titulo = "";
+  let texto = "";
+
+  if(tipo === "whatsapp"){
+    titulo = "Mensagem para WhatsApp";
+    texto = `Olá! Tudo bem?\n\nQuero apresentar uma oportunidade que pode ser interessante para você: ${produto}.\n\n${beneficios}\n\n${preco ? "Valor: " + preco + "\n\n" : ""}Nosso objetivo é: ${objetivo.toLowerCase()}.\n\nGostaria de saber se posso te explicar melhor?`;
+  }
+
+  if(tipo === "ligacao"){
+    titulo = "Roteiro de ligação";
+    texto = `ABERTURA\nOlá! Tudo bem? Meu nome é [nome]. Posso falar com você por um instante?\n\nIDENTIFICAÇÃO\nEstou entrando em contato porque acredito que ${produto} pode ser interessante para pessoas com perfil como o seu.\n\nAPRESENTAÇÃO\n${beneficios}\n\nPÚBLICO\nNossa solução é direcionada a: ${publico}.\n\nOBJETIVO\n${objetivo}.\n\nENCERRAMENTO\nVocê gostaria de saber mais detalhes?`;
+  }
+
+  if(tipo === "objecoes"){
+    titulo = "Respostas para objeções";
+    texto = `PRODUTO: ${produto}\n\n1. "Está muito caro."\nEntendo sua preocupação. Posso mostrar os benefícios e o valor que essa solução pode entregar?\n\n2. "Vou pensar melhor."\nClaro! Existe alguma dúvida específica que eu possa esclarecer para ajudar na sua decisão?\n\n3. "Não tenho interesse agora."\nTudo bem. Posso entender se existe algum outro momento em que essa solução seria interessante?\n\nDIFERENCIAIS:\n${beneficios}\n\nPÚBLICO-ALVO:\n${publico}\n\nPREÇO:\n${preco || "Não informado"}`;
+  }
+
+  textoAtual = texto;
+  document.getElementById("tituloResultado").textContent = titulo;
+  document.getElementById("textoResultado").textContent = texto;
+  document.getElementById("resultado").style.display = "block";
+  document.getElementById("resultado").scrollIntoView({behavior:"smooth"});
+}
+
+async function copiar(){
+  try{
+    await navigator.clipboard.writeText(textoAtual);
+    alert("Texto copiado!");
+  }catch(e){
+    alert("Não foi possível copiar automaticamente.");
+  }
+}
+</script>
+</body>
+</html>
