@@ -1,104 +1,268 @@
-
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>VENDAI | Produtos</title>
+
 <style>
 *{box-sizing:border-box}
-body{margin:0;padding:24px;font-family:Arial,sans-serif;background:#0b1020;color:#fff}
+
+body{
+  margin:0;
+  padding:24px;
+  font-family:Arial,sans-serif;
+  background:#0b1020;
+  color:#fff
+}
+
 .container{max-width:850px;margin:auto}
 a{color:#a78bfa;text-decoration:none}
 p{color:#aab2c5}
-.card{background:#151d32;padding:22px;border-radius:14px;margin-top:24px}
+
+.card{
+  background:#151d32;
+  padding:22px;
+  border-radius:14px;
+  margin-top:24px
+}
+
 label{display:block;margin:16px 0 7px}
-input,textarea{width:100%;padding:13px;border:1px solid #34415c;border-radius:8px;background:#0b1020;color:white;font-size:16px}
+
+input,textarea{
+  width:100%;
+  padding:13px;
+  border:1px solid #34415c;
+  border-radius:8px;
+  background:#0b1020;
+  color:white;
+  font-size:16px
+}
+
 textarea{min-height:90px}
-button{margin-top:18px;padding:14px 20px;border:0;border-radius:8px;background:#8b5cf6;color:white;font-weight:bold;font-size:15px;cursor:pointer}
+
+button{
+  margin-top:18px;
+  padding:14px 20px;
+  border:0;
+  border-radius:8px;
+  background:#8b5cf6;
+  color:white;
+  font-weight:bold;
+  font-size:15px;
+  cursor:pointer
+}
+
 button:disabled{opacity:.5;cursor:not-allowed}
-.product{padding:15px;margin-top:12px;background:#202b44;border-radius:9px}
+
+.product{
+  padding:15px;
+  margin-top:12px;
+  background:#202b44;
+  border-radius:9px
+}
+
 .delete{background:#9f3345;margin-top:10px}
-.status{color:#4ade80;font-size:13px;margin-top:12px;white-space:pre-wrap}
+
+.status{
+  color:#4ade80;
+  font-size:13px;
+  margin-top:12px;
+  white-space:pre-wrap
+}
+
 .hidden{display:none}
+
+.link-button{
+  display:block;
+  background:none;
+  color:#a78bfa;
+  padding:8px 0;
+  margin-top:12px;
+  font-weight:normal;
+  text-align:left
+}
 </style>
 </head>
+
 <body>
+
 <div class="container">
+
 <a href="index.html">← Voltar ao painel</a>
+
 <h1>📦 VENDAI | Produtos</h1>
 <p>Gerencie seus produtos na nuvem.</p>
 
+<!-- LOGIN -->
+
 <div class="card" id="authCard">
+
 <h2>🔐 Acesso à sua conta</h2>
+
 <label>E-mail</label>
-<input id="email" type="email" placeholder="seu@email.com" autocomplete="email">
+<input id="email" type="email"
+placeholder="seu@email.com"
+autocomplete="email">
 
 <label>Senha</label>
-<input id="password" type="password" placeholder="Mínimo de 6 caracteres" autocomplete="current-password">
+<input id="password" type="password"
+placeholder="Mínimo de 6 caracteres"
+autocomplete="current-password">
 
 <button type="button" id="loginButton">Entrar</button>
-<button type="button" id="signupButton">Criar minha conta</button>
+
+<button type="button" id="signupButton">
+Criar minha conta
+</button>
+
+<button type="button" class="link-button"
+id="forgotButton">
+Esqueci minha senha
+</button>
+
 <div class="status" id="authStatus"></div>
+
 </div>
 
+<!-- RECUPERAÇÃO DE SENHA -->
+
+<div class="card hidden" id="recoveryCard">
+
+<h2>🔑 Nova senha</h2>
+
+<p>Digite sua nova senha para recuperar o acesso.</p>
+
+<label>Nova senha</label>
+
+<input id="newPassword" type="password"
+placeholder="Mínimo de 6 caracteres"
+autocomplete="new-password">
+
+<label>Confirme a nova senha</label>
+
+<input id="confirmPassword" type="password"
+placeholder="Digite novamente"
+autocomplete="new-password">
+
+<button type="button" id="updatePasswordButton">
+Salvar nova senha
+</button>
+
+<div class="status" id="recoveryStatus"></div>
+
+</div>
+
+<!-- SISTEMA -->
+
 <div class="card hidden" id="appCard">
+
 <p id="userInfo"></p>
-<button type="button" id="logoutButton">Sair da conta</button>
+
+<button type="button" id="logoutButton">
+Sair da conta
+</button>
 
 <h2>Novo produto</h2>
+
 <form id="productForm">
+
 <label>Nome do produto</label>
 <input id="name" required placeholder="Ex.: Smartwatch">
 
 <label>Preço de venda (R$)</label>
-<input id="price" type="number" min="0" step="0.01" required placeholder="199.90">
+<input id="price" type="number"
+min="0" step="0.01" required
+placeholder="199.90">
 
 <label>Estoque disponível</label>
-<input id="stock" type="number" min="0" step="1" required placeholder="10">
+<input id="stock" type="number"
+min="0" step="1" required
+placeholder="10">
 
 <label>Descrição</label>
-<textarea id="description" placeholder="Descreva seu produto"></textarea>
+<textarea id="description"
+placeholder="Descreva seu produto"></textarea>
 
-<button type="submit" id="saveButton">Cadastrar produto</button>
+<button type="submit" id="saveButton">
+Cadastrar produto
+</button>
+
 </form>
 
 <div class="status" id="status"></div>
 
 <h2>Produtos cadastrados</h2>
+
 <div id="products">Carregando...</div>
+
 </div>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script>
-const SUPABASE_URL = "https://sycsmnmmxbxgwgozwdwy.supabase.co";
-const SUPABASE_KEY = "sb_publishable__F1cYBkge2cp2jLxDTimaw_NLhbgB-E";
-const STORAGE_KEY = "vendai_produtos";
 
-const db = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+<script>
+
+const SUPABASE_URL =
+"https://sycsmnmmxbxgwgozwdwy.supabase.co";
+
+const SUPABASE_KEY =
+"sb_publishable__F1cYBkge2cp2jLxDTimaw_NLhbgB-E";
+
+const db = supabase.createClient(
+  SUPABASE_URL,
+  SUPABASE_KEY
+);
 
 const authCard = document.getElementById("authCard");
 const appCard = document.getElementById("appCard");
+const recoveryCard = document.getElementById("recoveryCard");
+
 const authStatus = document.getElementById("authStatus");
 const status = document.getElementById("status");
+const recoveryStatus = document.getElementById("recoveryStatus");
+
 const products = document.getElementById("products");
 const form = document.getElementById("productForm");
 
 let currentUser = null;
+let recoveryMode = false;
 
 function mensagem(elemento, texto) {
   elemento.textContent = texto;
 }
 
+function mostrarRecuperacao() {
+  recoveryMode = true;
+
+  authCard.classList.add("hidden");
+  appCard.classList.add("hidden");
+  recoveryCard.classList.remove("hidden");
+
+  mensagem(
+    recoveryStatus,
+    "Digite sua nova senha."
+  );
+}
+
 async function atualizarInterface() {
+
+  if (recoveryMode) {
+    authCard.classList.add("hidden");
+    appCard.classList.add("hidden");
+    recoveryCard.classList.remove("hidden");
+    return;
+  }
+
   if (!currentUser) {
     authCard.classList.remove("hidden");
     appCard.classList.add("hidden");
+    recoveryCard.classList.add("hidden");
     return;
   }
 
   authCard.classList.add("hidden");
+  recoveryCard.classList.add("hidden");
   appCard.classList.remove("hidden");
 
   document.getElementById("userInfo").textContent =
@@ -107,41 +271,70 @@ async function atualizarInterface() {
   await carregarProdutos();
 }
 
+// ENTRAR
+
 async function entrar() {
-  const email = document.getElementById("email").value.trim();
-  const password = document.getElementById("password").value;
+
+  const email =
+    document.getElementById("email").value.trim();
+
+  const password =
+    document.getElementById("password").value;
 
   if (!email || !password) {
     mensagem(authStatus, "Informe seu e-mail e sua senha.");
     return;
   }
 
+  const button = document.getElementById("loginButton");
+  button.disabled = true;
+
   const { error } = await db.auth.signInWithPassword({
     email,
     password
   });
 
+  button.disabled = false;
+
   if (error) {
     mensagem(authStatus, "Erro ao entrar: " + error.message);
-  }
-}
-
-async function cadastrarConta() {
-  const email = document.getElementById("email").value.trim();
-  const password = document.getElementById("password").value;
-
-  if (!email || password.length < 6) {
-    mensagem(authStatus, "Informe um e-mail válido e uma senha com pelo menos 6 caracteres.");
     return;
   }
+
+  mensagem(authStatus, "Login realizado com sucesso!");
+}
+
+// CRIAR CONTA
+
+async function cadastrarConta() {
+
+  const email =
+    document.getElementById("email").value.trim();
+
+  const password =
+    document.getElementById("password").value;
+
+  if (!email || password.length < 6) {
+    mensagem(
+      authStatus,
+      "Informe um e-mail válido e uma senha com pelo menos 6 caracteres."
+    );
+    return;
+  }
+
+  const button = document.getElementById("signupButton");
+  button.disabled = true;
 
   const { data, error } = await db.auth.signUp({
     email,
     password,
     options: {
-      emailRedirectTo: window.location.origin + window.location.pathname
+      emailRedirectTo:
+        window.location.origin + window.location.pathname
     }
   });
+
+  button.disabled = false;
 
   if (error) {
     mensagem(authStatus, "Erro ao criar conta: " + error.message);
@@ -151,11 +344,119 @@ async function cadastrarConta() {
   if (data.session) {
     mensagem(authStatus, "Conta criada com sucesso!");
   } else {
-    mensagem(authStatus, "Conta criada! Confira seu e-mail e confirme o cadastro antes de entrar.");
+    mensagem(
+      authStatus,
+      "Conta criada! Confira seu e-mail e confirme o cadastro antes de entrar."
+    );
   }
 }
 
+// ESQUECI MINHA SENHA
+
+async function recuperarSenha() {
+
+  const email =
+    document.getElementById("email").value.trim();
+
+  if (!email) {
+    mensagem(
+      authStatus,
+      "Digite seu e-mail para receber o link de recuperação."
+    );
+    return;
+  }
+
+  const button = document.getElementById("forgotButton");
+  button.disabled = true;
+
+  const { error } = await db.auth.resetPasswordForEmail(
+    email,
+    {
+      redirectTo:
+        window.location.origin + window.location.pathname
+    }
+  );
+
+  button.disabled = false;
+
+  if (error) {
+    mensagem(
+      authStatus,
+      "Erro ao enviar recuperação: " + error.message
+    );
+    return;
+  }
+
+  mensagem(
+    authStatus,
+    "Se o endereço estiver cadastrado, você receberá um e-mail com o link para redefinir sua senha. Verifique também o spam."
+  );
+}
+
+// SALVAR NOVA SENHA
+
+async function atualizarSenha() {
+
+  const password =
+    document.getElementById("newPassword").value;
+
+  const confirm =
+    document.getElementById("confirmPassword").value;
+
+  if (password.length < 6) {
+    mensagem(
+      recoveryStatus,
+      "A senha precisa ter pelo menos 6 caracteres."
+    );
+    return;
+  }
+
+  if (password !== confirm) {
+    mensagem(
+      recoveryStatus,
+      "As senhas não são iguais."
+    );
+    return;
+  }
+
+  const button =
+    document.getElementById("updatePasswordButton");
+
+  button.disabled = true;
+
+  const { error } = await db.auth.updateUser({
+    password: password
+  });
+
+  button.disabled = false;
+
+  if (error) {
+    mensagem(
+      recoveryStatus,
+      "Erro ao atualizar senha: " + error.message
+    );
+    return;
+  }
+
+  recoveryMode = false;
+
+  mensagem(
+    recoveryStatus,
+    "Senha atualizada com sucesso!"
+  );
+
+  currentUser = (
+    await db.auth.getUser()
+  ).data.user;
+
+  await atualizarInterface();
+  mensagem(status, "Sua nova senha já está ativa.");
+}
+
+// SAIR
+
 async function sair() {
+
   const { error } = await db.auth.signOut();
 
   if (error) {
@@ -164,69 +465,43 @@ async function sair() {
   }
 
   currentUser = null;
+  recoveryMode = false;
+
   await atualizarInterface();
+
   mensagem(authStatus, "Você saiu da sua conta.");
 }
 
+// CARREGAR PRODUTOS
+
 async function carregarProdutos() {
+
   products.textContent = "Carregando produtos...";
 
-  let { data, error } = await db
-    .from("products")
-    .select("*")
-    .order("created_at", { ascending: false });
-
-  if (error) {
-    products.textContent = "Erro ao carregar produtos: " + error.message;
+  if (!currentUser) {
+    products.textContent = "Entre na sua conta.";
     return;
   }
 
-  if (data.length === 0) {
-    let antigos = [];
+  const { data, error } = await db
+    .from("products")
+    .select("*")
+    .eq("user_id", currentUser.id)
+    .order("created_at", { ascending: false });
 
-    try {
-      antigos = JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
-    } catch {
-      antigos = [];
-    }
-
-    if (antigos.length > 0) {
-      const { error: importError } = await db
-        .from("products")
-        .insert(antigos.map(p => ({
-          name: p.name,
-          price: Number(p.price),
-          stock: Number(p.stock),
-          description: p.description || ""
-        })));
-
-      if (importError) {
-        mensagem(status, "Erro ao importar produtos antigos: " + importError.message);
-        return;
-      }
-
-      localStorage.removeItem(STORAGE_KEY);
-
-      mensagem(status, "Produtos antigos transferidos para a nuvem!");
-
-      const resultado = await db
-        .from("products")
-        .select("*")
-        .order("created_at", { ascending: false });
-
-      if (resultado.error) {
-        products.textContent = "Erro ao atualizar a lista: " + resultado.error.message;
-        return;
-      }
-
-      data = resultado.data;
-    }
+  if (error) {
+    products.textContent =
+      "Erro ao carregar produtos: " + error.message;
+    return;
   }
 
-  mostrarProdutos(data);
+  mostrarProdutos(data || []);
 }
 
+// MOSTRAR PRODUTOS
+
 function mostrarProdutos(lista) {
+
   products.replaceChildren();
 
   if (!lista || lista.length === 0) {
@@ -235,6 +510,7 @@ function mostrarProdutos(lista) {
   }
 
   lista.forEach(produto => {
+
     const item = document.createElement("div");
     item.className = "product";
 
@@ -242,61 +518,115 @@ function mostrarProdutos(lista) {
     nome.textContent = produto.name;
 
     const detalhes = document.createElement("p");
+
     detalhes.textContent =
-      "Preço: R$ " + Number(produto.price).toFixed(2) +
+      "Preço: R$ " +
+      Number(produto.price).toFixed(2) +
       " | Estoque: " + produto.stock;
 
     const descricao = document.createElement("p");
-    descricao.textContent = produto.description || "Sem descrição.";
+
+    descricao.textContent =
+      produto.description || "Sem descrição.";
 
     const excluir = document.createElement("button");
+
     excluir.className = "delete";
     excluir.textContent = "Excluir produto";
     excluir.type = "button";
 
     excluir.addEventListener("click", async () => {
-      if (!confirm("Deseja realmente excluir este produto?")) return;
 
-      const { error } = await db
+      if (!confirm("Deseja realmente excluir este produto?")) {
+        return;
+      }
+
+      excluir.disabled = true;
+
+      const { data, error } = await db
         .from("products")
         .delete()
-        .eq("id", produto.id);
+        .eq("id", produto.id)
+        .eq("user_id", currentUser.id)
+        .select("id");
+
+      excluir.disabled = false;
 
       if (error) {
         mensagem(status, "Erro ao excluir: " + error.message);
         return;
       }
 
+      if (!data || data.length === 0) {
+        mensagem(status, "Produto não encontrado ou sem permissão.");
+        return;
+      }
+
       mensagem(status, "Produto excluído com sucesso!");
+
       await carregarProdutos();
+
     });
 
-    item.append(nome, detalhes, descricao, excluir);
+    item.append(
+      nome,
+      detalhes,
+      descricao,
+      excluir
+    );
+
     products.appendChild(item);
+
   });
 }
 
+// CADASTRAR PRODUTO
+
 form.addEventListener("submit", async event => {
+
   event.preventDefault();
 
-  if (!currentUser) return;
-
-  const produto = {
-    name: document.getElementById("name").value.trim(),
-    price: Number(document.getElementById("price").value),
-    stock: Number(document.getElementById("stock").value),
-    description: document.getElementById("description").value.trim()
-  };
-
-  if (!produto.name || !Number.isFinite(produto.price) ||
-      !Number.isInteger(produto.stock) ||
-      produto.price < 0 || produto.stock < 0) {
-    mensagem(status, "Confira os dados do produto.");
+  if (!currentUser) {
+    mensagem(status, "Faça login antes de cadastrar produtos.");
     return;
   }
 
-  const saveButton = document.getElementById("saveButton");
+  const produto = {
+
+    user_id: currentUser.id,
+
+    name:
+      document.getElementById("name").value.trim(),
+
+    price:
+      Number(document.getElementById("price").value),
+
+    stock:
+      Number(document.getElementById("stock").value),
+
+    description:
+      document.getElementById("description").value.trim()
+
+  };
+
+  if (
+    !produto.name ||
+    !Number.isFinite(produto.price) ||
+    !Number.isInteger(produto.stock) ||
+    produto.price < 0 ||
+    produto.stock < 0
+  ) {
+
+    mensagem(status, "Confira os dados do produto.");
+    return;
+
+  }
+
+  const saveButton =
+    document.getElementById("saveButton");
+
   saveButton.disabled = true;
+
   mensagem(status, "Salvando na nuvem...");
 
   const { error } = await db
@@ -311,9 +641,14 @@ form.addEventListener("submit", async event => {
   }
 
   form.reset();
+
   mensagem(status, "Produto salvo na nuvem com sucesso!");
+
   await carregarProdutos();
+
 });
+
+// EVENTOS DOS BOTÕES
 
 document.getElementById("loginButton")
   .addEventListener("click", entrar);
@@ -321,10 +656,36 @@ document.getElementById("loginButton")
 document.getElementById("signupButton")
   .addEventListener("click", cadastrarConta);
 
+document.getElementById("forgotButton")
+  .addEventListener("click", recuperarSenha);
+
+document.getElementById("updatePasswordButton")
+  .addEventListener("click", atualizarSenha);
+
 document.getElementById("logoutButton")
   .addEventListener("click", sair);
 
+// INICIALIZAÇÃO
+
 async function iniciar() {
+
+  db.auth.onAuthStateChange((event, session) => {
+
+    currentUser = session?.user || null;
+
+    if (event === "PASSWORD_RECOVERY") {
+      mostrarRecuperacao();
+      return;
+    }
+
+    if (event === "SIGNED_OUT") {
+      recoveryMode = false;
+    }
+
+    atualizarInterface();
+
+  });
+
   const { data, error } = await db.auth.getSession();
 
   if (error) {
@@ -332,16 +693,16 @@ async function iniciar() {
     return;
   }
 
-  currentUser = data.session?.user || null;
-  await atualizarInterface();
+  if (!recoveryMode) {
+    currentUser = data.session?.user || null;
+    await atualizarInterface();
+  }
 
-  db.auth.onAuthStateChange((_event, session) => {
-    currentUser = session?.user || null;
-    setTimeout(() => atualizarInterface(), 0);
-  });
 }
 
 iniciar();
+
 </script>
+
 </body>
 </html>
