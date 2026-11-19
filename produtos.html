@@ -1,0 +1,123 @@
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>VENDAI | Produtos</title>
+<style>
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  padding: 24px;
+  font-family: Arial, sans-serif;
+  background: #0b1020;
+  color: #fff;
+}
+.container { max-width: 850px; margin: auto; }
+a { color: #a78bfa; text-decoration: none; }
+h1 { margin-bottom: 8px; }
+p { color: #aab2c5; }
+.card {
+  background: #151d32;
+  padding: 22px;
+  border-radius: 14px;
+  margin-top: 24px;
+}
+label { display: block; margin: 16px 0 7px; }
+input, textarea {
+  width: 100%;
+  padding: 13px;
+  border: 1px solid #34415c;
+  border-radius: 8px;
+  background: #0b1020;
+  color: white;
+  font-size: 16px;
+}
+textarea { min-height: 90px; }
+button {
+  margin-top: 18px;
+  padding: 14px 20px;
+  border: 0;
+  border-radius: 8px;
+  background: #8b5cf6;
+  color: white;
+  font-weight: bold;
+  font-size: 15px;
+}
+.product {
+  padding: 15px;
+  margin-top: 12px;
+  background: #202b44;
+  border-radius: 9px;
+}
+</style>
+</head>
+<body>
+<div class="container">
+  <a href="index.html">← Voltar ao painel</a>
+  <h1>📦 Produtos</h1>
+  <p>Cadastre e organize os produtos vendidos pela VENDAI.</p>
+
+  <div class="card">
+    <h2>Novo produto</h2>
+    <form id="productForm">
+      <label>Nome do produto</label>
+      <input id="name" required placeholder="Ex.: Smartwatch">
+
+      <label>Preço de venda (R$)</label>
+      <input id="price" type="number" min="0" step="0.01" required placeholder="199.90">
+
+      <label>Estoque disponível</label>
+      <input id="stock" type="number" min="0" step="1" required placeholder="10">
+
+      <label>Descrição</label>
+      <textarea id="description" placeholder="Descreva seu produto"></textarea>
+
+      <button type="submit">Cadastrar produto</button>
+    </form>
+  </div>
+
+  <div class="card">
+    <h2>Produtos cadastrados</h2>
+    <div id="products">Nenhum produto cadastrado nesta sessão.</div>
+  </div>
+</div>
+
+<script>
+const form = document.getElementById("productForm");
+const products = document.getElementById("products");
+
+form.addEventListener("submit", function(event) {
+  event.preventDefault();
+
+  const name = document.getElementById("name").value;
+  const price = Number(document.getElementById("price").value);
+  const stock = document.getElementById("stock").value;
+  const description = document.getElementById("description").value;
+
+  const item = document.createElement("div");
+  item.className = "product";
+
+  const title = document.createElement("strong");
+  title.textContent = name;
+
+  const details = document.createElement("p");
+  details.textContent = "Preço: R$ " + price.toFixed(2) +
+    " | Estoque: " + stock;
+
+  const desc = document.createElement("p");
+  desc.textContent = description;
+
+  item.append(title, details, desc);
+
+  if (products.textContent.includes("Nenhum produto")) {
+    products.textContent = "";
+  }
+
+  products.appendChild(item);
+  form.reset();
+});
+</script>
+</body>
+</html>
